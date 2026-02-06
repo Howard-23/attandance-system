@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance - Attendance System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Attendance Management</h1>
+    <div class="header-actions">
+        <button class="btn btn-success" onclick="openCheckInModal()">
+            <i class="fas fa-sign-in-alt"></i> Check In
+        </button>
+        <button class="btn btn-warning" onclick="openCheckOutModal()">
+            <i class="fas fa-sign-out-alt"></i> Check Out
+        </button>
+        <button class="btn btn-primary" onclick="openManualAttendanceModal()">
+            <i class="fas fa-edit"></i> Manual Entry
+        </button>
+    </div>
+</div>
+
+<!-- Today's Attendance -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-calendar-day"></i> Today's Attendance</h3>
+        <span class="badge badge-info" id="todayDate"></span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table" id="todayAttendanceTable">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Work Hours</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7" class="text-center">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance History -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-history"></i> Attendance History</h3>
+        <div class="filter-row">
+            <div class="form-group">
+                <input type="date" id="filterDate" class="form-control">
+            </div>
+            <div class="form-group">
+                <select id="filterEmployee" class="form-control">
+                    <option value="">All Employees</option>
+                </select>
+            </div>
+            <button class="btn btn-secondary" onclick="filterAttendance()">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+            <button class="btn btn-link" onclick="resetFilter()">Reset</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table" id="attendanceHistoryTable">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Work Hours</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7" class="text-center">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Check In Modal -->
+<div class="modal" id="checkInModal">
+    <div class="modal-content modal-small">
+        <div class="modal-header">
+            <h3><i class="fas fa-sign-in-alt"></i> Check In</h3>
+            <button class="close-btn" onclick="closeCheckInModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="checkInForm">
+                <div class="form-group">
+                    <label for="checkInEmployee">Select Employee *</label>
+                    <select id="checkInEmployee" required>
+                        <option value="">Select Employee</option>
+                    </select>
+                </div>
+                <div class="current-time-display">
+                    <i class="fas fa-clock"></i>
+                    <span id="checkInTimeDisplay">--:--:--</span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeCheckInModal()">Cancel</button>
+            <button class="btn btn-success" onclick="submitCheckIn()">Check In Now</button>
+        </div>
+    </div>
+</div>
+
+<!-- Check Out Modal -->
+<div class="modal" id="checkOutModal">
+    <div class="modal-content modal-small">
+        <div class="modal-header">
+            <h3><i class="fas fa-sign-out-alt"></i> Check Out</h3>
+            <button class="close-btn" onclick="closeCheckOutModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="checkOutForm">
+                <div class="form-group">
+                    <label for="checkOutEmployee">Select Employee *</label>
+                    <select id="checkOutEmployee" required>
+                        <option value="">Select Employee</option>
+                    </select>
+                </div>
+                <div class="current-time-display">
+                    <i class="fas fa-clock"></i>
+                    <span id="checkOutTimeDisplay">--:--:--</span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeCheckOutModal()">Cancel</button>
+            <button class="btn btn-warning" onclick="submitCheckOut()">Check Out Now</button>
+        </div>
+    </div>
+</div>
+
+<!-- Manual Attendance Modal -->
+<div class="modal" id="manualAttendanceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-edit"></i> Manual Attendance Entry</h3>
+            <button class="close-btn" onclick="closeManualAttendanceModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="manualAttendanceForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="manualEmployee">Employee *</label>
+                        <select id="manualEmployee" required>
+                            <option value="">Select Employee</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="manualDate">Date *</label>
+                        <input type="date" id="manualDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="manualCheckIn">Check In Time</label>
+                        <input type="time" id="manualCheckIn">
+                    </div>
+                    <div class="form-group">
+                        <label for="manualCheckOut">Check Out Time</label>
+                        <input type="time" id="manualCheckOut">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="manualStatus">Status *</label>
+                    <select id="manualStatus" required>
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="leave">Leave</option>
+                        <option value="half_day">Half Day</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeManualAttendanceModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="submitManualAttendance()">Save Entry</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/attendance.js') }}"></script>
+{% endblock %}

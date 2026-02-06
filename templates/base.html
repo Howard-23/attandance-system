@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Attendance System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-clock"></i> Attendance</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="{% if request.endpoint == 'index' %}active{% endif %}">
+                    <a href="{{ url_for('index') }}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="{% if request.endpoint == 'employees_page' %}active{% endif %}">
+                    <a href="{{ url_for('employees_page') }}">
+                        <i class="fas fa-users"></i>
+                        <span>Employees</span>
+                    </a>
+                </li>
+                <li class="{% if request.endpoint == 'attendance_page' %}active{% endif %}">
+                    <a href="{{ url_for('attendance_page') }}">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li class="{% if request.endpoint == 'reports_page' %}active{% endif %}">
+                    <a href="{{ url_for('reports_page') }}">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span>Admin</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
